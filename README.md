@@ -6,7 +6,7 @@ This framework can be described as a variation of "Encrypted Processing as a Ser
 
 Currently, this project is in its early alpha stage and includes only minimal functionality. Its sole purpose for now is to provide sufficient tools for people with no cryptographic expertise to experiment and prototype. Therefore, if you are such a person, you should primarily be interested in the other encproc decryptor repository. The JavaScript functionality exposed by our WebAssembly-compiled modules provides sufficient tools to experiment with the full power of the engine without needing to worry about cryptographic configurations.
 
-You can find examples of the usage of this API here: `github.stub_repo` (TODO).
+You can find examples of the usage of this API here -- [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor)
 
 ## Roadmap
 
@@ -33,7 +33,7 @@ It should be noted that alternative EPaaS frameworks exist, such as Multi-key Ho
 - **RESTful API**: Offers endpoints to create streams, contribute data, and retrieve aggregates.
 - **Database Integration**: Utilizes MySQL for storing aggregation parameters and results.
 - **Containerized Deployment**: Provides Docker configurations for easy deployment.
-- **Client-side WASM Components**: Supplies WebAssembly modules for client-side encryption, decryption, and encoding from a JS environment.
+- **Client-side WASM Components**: Supplies WebAssembly modules for client-side encryption, decryption, and encoding from a JS environment. Examples are shown here [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor)
 
 ## Architecture
 
@@ -58,7 +58,7 @@ Ensure you have the following installed:
 
 ### Installation
 
-1. **Build and Run with Docker**:
+**Build and Run with Docker**:
 
    Ensure Docker is installed on your system and is up and running. Then, execute:
 
@@ -75,7 +75,7 @@ If you want to prototype and experiment with this engine, you can either run it 
 - **Running Locally**: If you are running the engine locally, you may disable the authorization middleware in the source code for easier experimentation.
 - **Using a Remote Instance**: If you are experimenting with a running instance hosted by someone else, you will need to register a data stream with the engine.
 
-For detailed instructions on how to use this engine, please refer to the client-side repository. Below, we provide an overview of the API endpoints.
+For detailed instructions on how to use this engine, please refer to the client-side repository [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor). Below, we provide an overview of the API endpoints.
 
 ## API Endpoints
 
