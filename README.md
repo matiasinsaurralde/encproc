@@ -131,3 +131,5 @@ This project is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE
 
 - [encproc decryptor Repository](https://github.com/collapsinghierarchy/encproc-decryptor) – The client side part that harnesses the powers of the encrypted processing as a service engine.
 - Contact: encproc@gmail.com
+
+Happy Processing!
