@@ -8,10 +8,10 @@ import (
 	"github.com/dgrijalva/jwt-go" // Import for JWT package (use the appropriate import path)
 )
 
-// Secret key for signing the JWT token (should be kept secure, e.g., as an env variable)
-var secretKey = []byte("m9Lk5RgBq23rTpqZn8A1F9Us4qaMphzd1knmn1H3p6A=")
-
-//For testing:m9Lk5RgBq23rTpqZn8A1F9Us4qaMphzd1knmn1H3p6A=
+// JWTMiddleware encapsulates the secret key and validation logic.
+type jWTMiddleware struct {
+	secretKey []byte
+}
 
 func (calc *calculator) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func (calc *calculator) authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		// Validate the token
-		token, err := validateToken(tokenString)
+		token, err := validateToken(calc.jWTMiddleware.secretKey, tokenString)
 		if err != nil || !token.Valid {
 			http.Error(w, "Unauthorized: Invalid or expired token", http.StatusUnauthorized)
 			return
@@ -55,11 +55,10 @@ func (calc *calculator) authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
-// Validate the JWT token
-func validateToken(tokenString string) (*jwt.Token, error) {
-	// Parse the token using the secret key
+// ValidateToken parses and validates the JWT token using the secret key.
+func validateToken(secretKey []byte, tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Ensure that the signing method is HMAC SHA256
+		// Ensure the signing method is HMAC.
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}

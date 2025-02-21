@@ -12,9 +12,10 @@ import (
 )
 
 type calculator struct {
-	logger     *slog.Logger
-	calc_model *EncProcModel
-	agg_map    sync.Map // concurrent map: key string -> *aggregator
+	logger        *slog.Logger
+	calc_model    *EncProcModel
+	jWTMiddleware *jWTMiddleware
+	agg_map       sync.Map // concurrent map: key string -> *aggregator
 }
 
 func main() {
@@ -36,6 +37,7 @@ func main() {
 	dbName := getEnv("DB_NAME", "mydb")
 	dbUser := getEnv("DB_USER", "myuser")
 	dbPassword := getEnv("DB_PASSWORD", "mypassword")
+	jwt_sk := getEnv("SECRET_KEY", "m9Lk5RgBq23rTpqZn8A1F9Us4qaMphzd1knmn1H3p6A=")
 
 	// Build the connection string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
@@ -54,6 +56,8 @@ func main() {
 	}
 	calc.calc_model.initializeTables()
 	mux := calc.routes()
+	jwtMW := &jWTMiddleware{secretKey: []byte(jwt_sk)}
+	calc.jWTMiddleware = jwtMW
 
 	// Start the server
 	calc.logger.Info("starting server on :8080")
