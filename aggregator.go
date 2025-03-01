@@ -56,7 +56,6 @@ func (calc *calculator) initAggregator(pk []byte, params string) (*aggregator, e
 	return &aggr, nil
 }
 
-// Race condition already here possible
 func (agg *aggregator) aggregate(ct_bin []byte) error {
 	agg.mu.Lock()
 	defer agg.mu.Unlock()
