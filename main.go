@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"fmt"
 	"log/slog"
@@ -18,6 +19,8 @@ type calculator struct {
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
 }
 
+//Regarding PQC-TLS: https://github.com/golang/go/issues/64537 --> Therefore we will have to stick with what's available now.
+
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		AddSource: true,
@@ -32,6 +35,7 @@ func main() {
 
 	//------------------ Init the database connections -----------------------
 	// Fetch database configuration from environment variables
+	addr := getEnv("ADDR", ":443")
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "3306")
 	dbName := getEnv("DB_NAME", "mydb")
@@ -54,14 +58,34 @@ func main() {
 		logger:     logger,
 		calc_model: &EncProcModel{DB: db},
 	}
+
+	tlsConfig := &tls.Config{
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+		},
+	}
+
 	calc.calc_model.initializeTables()
 	mux := calc.routes()
 	jwtMW := &jWTMiddleware{secretKey: []byte(jwt_sk)}
 	calc.jWTMiddleware = jwtMW
 
+	srv := &http.Server{
+		Addr:      addr,
+		Handler:   c.Handler(mux),
+		TLSConfig: tlsConfig,
+	}
+
 	// Start the server
-	calc.logger.Info("starting server on :8080")
-	err = http.ListenAndServe(":8080", c.Handler(mux))
+	calc.logger.Info("starting server on :443")
+
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	logger.Error(err.Error())
 	os.Exit(1)
 }

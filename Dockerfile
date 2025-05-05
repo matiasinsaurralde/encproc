@@ -1,5 +1,5 @@
 # Start from the official Golang image
-FROM golang:1.22
+FROM golang:latest
 
 # Set the working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN go build -o api-server .
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE 443
 
 # Run the application
 CMD ["./api-server"]
