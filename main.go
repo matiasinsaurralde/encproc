@@ -60,6 +60,9 @@ func main() {
 		calc_model: &EncProcModel{DB: db},
 	}
 
+	/*
+	* TLS Configuration
+	 */
 	tlsConfig := &tls.Config{
 		PreferServerCipherSuites: true,
 		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},

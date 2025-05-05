@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encrypted Processing API Engine</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Encrypted Processing API Engine</h1>
+      <p>Separation-of-Duties-based Homomorphic Encryption Wrapper</p>
+    </div>
+  </header>
+
+  <section id="roadmap">
+    <div class="container">
+      <h2>Roadmap</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Current Features</h3>
+            <p>Fully-fledged RESTful Survey Example</p>
+            <p>BGV encryption from Lattigo with fixed parameterization</p>
+            <p>A generic aggregation API</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 1</h3>
+            <p>Testing and bug fixes</p>
+            <p>TLS support for the API</p>
+            <p>Multiple fixed parameterization options</p>
+            <p>Additional usage examples</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 2</h3>
+            <p>Integration of CCKS</p>
+            <p>Configurable parameterization (BGV/CKKS)</p>
+            <p>Additional functionalities (mean, variance, standard deviation)</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 3</h3>
+            <p>Configurable SIMD encoding</p>
+            <p>Introduction of output privacy mechanisms</p>
+            <p>Additional functionalities (set intersection, matching, and various distance metrics)</p>
+            <p>WASM compression</p>
+            <p>Additional usage examples</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 4</h3>
+            <p>DSL for non-cryptographers enabling fully automated parameterization and SIMD encoding</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="github">
+    <div class="container">
+      <h2>GitHub Repositories</h2>
+      <div class="repo-grid">
+        <a href="https://github.com/collapsinghierarchy/encproc" target="_blank" class="repo-card">
+          <h3>EncProc API Engine</h3>
+          <p>Core functionality of the API engine.</p>
+        </a>
+        <a href="https://github.com/collapsinghierarchy/encproc-decryptor" target="_blank" class="repo-card">
+          <h3>EncProc Decryptor</h3>
+          <p>Client-side components for communicating with the EncProc engine.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="info">
+    <div class="container">
+      <div class="privacy-statements">
+        <blockquote>
+          <p><em>"I have nothing to hide"</em> <span class="gray-text">(until I do, and then using E2EE makes me look suspicious).</span></p>
+        </blockquote>
+        <blockquote>
+          <p><em>"Big companies and the government already know everything about me, so why bother?"</em> <span class="gray-text">(until there’s a data breach, a political shift (USA 2025), or an employee abuses access—but it’ll never happen to me, right?).</span></p>
+        </blockquote>
+        <div>
+          <h2>What's It About?</h2>
+          <p>
+            Either you have heard one of the above statements, or you have said one yourself. Fortunately, we have moved past the era of "I have nothing to hide," at least when it comes to the mechanisms protecting our data at rest and in transit. Although overall awareness still adheres to that mindset—and amid the rise of AI agents and debates over chat control that threaten end-device privacy—the methods of end-to-end encryption remain the industrial state of the art as of 2025. However, data-in-use protection remains largely unexplored territory for the industry, which can be particularly daunting for a privacy-aware data subject—a person who uses a web service, provides their data, and cares (or would like to) about privacy. Data-in-use protections serve not only as a security measure for service providers but also as privacy-preserving measures for data subjects. Our Encrypted Processing API Engine is an attempt to foster a more privacy-aware web service industry by leveraging the concept of homomorphic encryption. It does not solve all of the privacy-preserving challenges, but we hope it will be a step in the right direction.
+          </p>
+          <p>
+            Homomorphic Encryption has existed since 1978 
+            (<a href="https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=c365f01d330b2211e74069120e88cff37eacbcf5">Rivest, R. L., Adleman, L., & Dertouzos, M. L.</a>, 
+            "On Data Banks and Privacy Homomorphisms"), yet it has not gained significant traction in the industry. 
+            One major reason is the misconception that these methods are inherently too inefficient for practical use.
+          </p>
+          <p>
+            When exploring research in cryptography—particularly in homomorphic encryption or outsourced secure computation—one often encounters complex challenges that researchers are eager to solve. This is intentional; research aims to push the boundaries of what is possible. However, despite these advances, the industry has made little progress in adopting privacy-preserving or data-in-use protection measures on a broad scale. It seems that everyone is waiting for the holy grail—a kind of "FHEwGGE" (Fully Homomorphic Encryption with Generally Guaranteed Efficiency) scheme that will solve all problems at once. This mindset is dangerous, as it leaves the industry vulnerable to privacy breaches and data misuse. With no clear signs of progress, the industry remains stuck in a loop of waiting for the perfect solution, even though simple, practical alternatives are already available.
+          </p>
+          <p>
+            As applied cryptology researchers collaborating with SMEs over the years, 
+            we have observed that many web services could easily be enhanced with simple 
+            privacy-preserving mechanisms, such as homomorphic encryption, without compromising efficiency, 
+            accuracy, or security. This realization was striking because:
+          </p>
+          <ul>
+            <li>Any privacy-preserving enhancement—no matter how small—is better than none.</li>
+            <li>Many straightforward use cases can already be improved with existing techniques, yet they remain unaddressed by research due to their simplicity.</li>
+          </ul>
+          <p>
+            This situation is akin to a student attending a lecture, momentarily losing focus, 
+            and then realizing the board is filled with formulas they no longer understand. 
+            In this analogy, the research community is the lecturer, and the industry is the student. 
+            To bridge this gap, we, as cryptology researchers, decided to take two steps back and 
+            reassess industry needs from a new perspective—so that we can move one step forward together.
+          </p>
+          <h3>Introducing Our Encrypted Processing API Engine</h3>
+          <p>
+            To facilitate seamless integration of privacy-preserving mechanisms into web services, 
+            we developed a simple API engine.
+          </p>
+          <p>
+            Our <strong>Encrypted Processing API Engine</strong> enables privacy-preserving and efficient data processing for applications. 
+            It leverages state-of-the-art homomorphic encryption implementations from 
+            <a href="https://github.com/tuneinsight/lattigo">Lattigo</a>, wrapped in our 
+            <a href="https://github.com/collapsinghierarchy/encproc">EncProc Engine</a>, 
+            which abstracts away cryptographic complexities. This means you don’t need cryptographic expertise 
+            to secure your web service with these privacy-enhancing mechanisms.
+          </p>
+          <p>
+            Our approach focuses on practical functionality—such as aggregation—ensuring 
+            efficiency without sacrificing accuracy while benefiting from homomorphic encryption’s privacy guarantees. 
+            Furthermore, our wrapper is built on a <strong>separation-of-duties-based single-key homomorphic encryption 
+            processing architecture</strong>. This architecture ensures a clear distinction between the 
+            <a href="https://github.com/collapsinghierarchy/encproc-decryptor">encryption/decryption</a> 
+            component and the <a href="https://github.com/collapsinghierarchy/encproc">processing</a> component.
+          </p>
+          <p>
+            We have formally proven the security of this architecture under the <strong>universal composability framework</strong>. 
+            Our results are available on 
+            <a href="https://eprint.iacr.org/2025/109.pdf">ePrint</a>.
+            We will reference a conference version of this paper in the near future. If you are a cryptology researcher or a web developer interested in collaborating with us, please reach out (encproc@gmail.com). We have a Discord server dedicated to this purpose, where we discuss and code together. Ideally, we will grow as a community and develop an engine that everyone can use and benefit from. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <footer>
+        <div class="container">
+            <p>Contact: encproc@gmail.com</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
