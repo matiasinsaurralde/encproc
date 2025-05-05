@@ -15,7 +15,7 @@ func (calc *calculator) routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	mux.Handle("GET /{$}", http.StripPrefix("/static", fileServer))
+	mux.Handle("GET /{$}", fileServer)                                            // Serve index.html for root path
 	mux.HandleFunc("POST /create-stream", calc.authMiddleware(calc.createStream)) //curl -X POST http://localhost:9000/create-stream -H "Authorization: Bearer <your-jwt-token>"
 	mux.HandleFunc("POST /contribute/aggregate/{id}", calc.contributeAggregate)
 	mux.HandleFunc("GET /snapshot/aggregate/{id}", calc.returnAggregate)
