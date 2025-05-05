@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/rs/cors"
 )
@@ -60,7 +61,8 @@ func main() {
 	}
 
 	tlsConfig := &tls.Config{
-		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		PreferServerCipherSuites: true,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
 		CipherSuites: []uint16{
 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
 			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
@@ -77,9 +79,12 @@ func main() {
 	calc.jWTMiddleware = jwtMW
 
 	srv := &http.Server{
-		Addr:      addr,
-		Handler:   c.Handler(mux),
-		TLSConfig: tlsConfig,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  120 * time.Second,
+		Addr:         addr,
+		Handler:      c.Handler(mux),
+		TLSConfig:    tlsConfig,
 	}
 
 	// Start the server
