@@ -17,7 +17,7 @@ func (calc *calculator) routes() http.Handler {
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	mux.Handle("GET /docs/", httpSwagger.Handler(
-		httpSwagger.URL("/static/swagger/swagger.json"),
+		httpSwagger.URL("/static/swagger.json"),
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
