@@ -1,0 +1,162 @@
+basePath: /
+definitions:
+  main.ConttributeAggregateResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  main.CreateStreamResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  main.GetPublicKeyResponse:
+    properties:
+      id:
+        type: string
+      publicKey:
+        type: string
+    type: object
+  main.ReturnAggregateNoneAvailableResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  main.ReturnAggregateResponse:
+    properties:
+      ct_aggr_byte_base64:
+        type: string
+      id:
+        type: string
+      sample_size:
+        type: integer
+    type: object
+host: pseudocrypt.site
+info:
+  contact:
+    email: encproc@gmail.com
+    name: Encproc Dev Team
+    url: https://pseudocrypt.site
+  description: Encrypted Processing API engine
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Encproc API engine
+  version: "0.1"
+paths:
+  /contribute/aggregate/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Contribute data to an existing aggregate by ID
+      parameters:
+      - description: Stream ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: BASE64 encoded Ciphertext
+        in: body
+        name: ct
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ConttributeAggregateResponse'
+        "500":
+          description: Internal Server Error
+      summary: Contribute to an existing aggregate
+      tags:
+      - BasicAPI
+  /create-stream:
+    post:
+      consumes:
+      - application/json
+      description: Create a new stream with the provided public key
+      parameters:
+      - description: BASE64 encoded Public Key
+        in: body
+        name: pk
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.CreateStreamResponse'
+        "500":
+          description: Internal Server Error
+      security:
+      - APIKeyAuth: []
+      summary: Create a new stream
+      tags:
+      - BasicAPI
+  /public-key/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the public key (base64-encoded) associated with the given
+        ID.
+      parameters:
+      - description: Stream ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.GetPublicKeyResponse'
+        "500":
+          description: Internal Server Error
+      summary: Retrieve the public key associated with a given ID
+      tags:
+      - BasicAPI
+  /snapshot/aggregate/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Make a snapshot of an existing aggregate by ID
+      parameters:
+      - description: Stream ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ReturnAggregateResponse'
+        "222":
+          description: Request successful, but no aggregate available. Try again later.
+          schema:
+            $ref: '#/definitions/main.ReturnAggregateNoneAvailableResponse'
+        "500":
+          description: Internal Server Error
+      summary: Make a snapshot of an existing aggregate
+      tags:
+      - BasicAPI
+swagger: "2.0"

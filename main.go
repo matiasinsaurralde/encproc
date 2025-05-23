@@ -20,8 +20,19 @@ type calculator struct {
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
 }
 
-//Regarding PQC-TLS: https://github.com/golang/go/issues/64537 --> Therefore we will have to stick with what's available now.
+//	@title			Encproc API engine
+//	@version		0.1
+//	@description	Encrypted Processing API engine
 
+//	@contact.name	Encproc Dev Team
+//	@contact.url	https://pseudocrypt.site
+//	@contact.email	encproc@gmail.com
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host		pseudocrypt.site
+// @BasePath	/
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		AddSource: true,
@@ -29,13 +40,12 @@ func main() {
 
 	// Allow all origins, adjust as needed
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, // Replace "*" with your specific domains if needed
+		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	})
 
 	//------------------ Init the database connections -----------------------
-	// Fetch database configuration from environment variables
 	addr := getEnv("ADDR", ":443")
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "3306")
@@ -61,8 +71,9 @@ func main() {
 	}
 
 	/*
-	* TLS Configuration
-	 */
+		* TLS Configuration
+			(05/2025) Regarding PQC-TLS: https://github.com/golang/go/issues/64537 --> Therefore we will have to stick with what's available now.
+	*/
 	tlsConfig := &tls.Config{
 		PreferServerCipherSuites: true,
 		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
@@ -78,6 +89,7 @@ func main() {
 
 	calc.calc_model.initializeTables()
 	mux := calc.routes()
+
 	jwtMW := &jWTMiddleware{secretKey: []byte(jwt_sk)}
 	calc.jWTMiddleware = jwtMW
 
@@ -90,10 +102,10 @@ func main() {
 		TLSConfig:    tlsConfig,
 	}
 
-	// Start the server
 	calc.logger.Info("starting server on :443")
 
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+
 	logger.Error(err.Error())
 	os.Exit(1)
 }

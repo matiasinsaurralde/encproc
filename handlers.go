@@ -14,7 +14,25 @@ func (calc *calculator) home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("heyho"))
 }
 
-// POST /create-stream
+type CreateStreamRequest struct {
+	PK string `json:"pk"`
+}
+
+type CreateStreamResponse struct {
+	Message string `json:"message"`
+	ID      string `json:"id"`
+}
+
+// @Summary		Create a new stream
+// @Description	Create a new stream with the provided public key
+// @Tags			BasicAPI
+// @Accept			json
+// @Produce		json
+// @Param			pk	body		string	true	"BASE64 encoded Public Key"
+// @Success		200	{object}	CreateStreamResponse
+// @Failure		500
+// @Router			/create-stream [post]
+// @Security		APIKeyAuth
 func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -51,7 +69,26 @@ func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, response)
 }
 
-// POST /contribute/aggregate/{id}
+type ContributeAggregateRequest struct {
+	ID string `json:"id"`
+	CT string `json:"ct"`
+}
+
+type ConttributeAggregateResponse struct {
+	Message string `json:"message"`
+	ID      string `json:"id"`
+}
+
+// @Summary		Contribute to an existing aggregate
+// @Description	Contribute data to an existing aggregate by ID
+// @Tags			BasicAPI
+// @Accept			json
+// @Produce		json
+// @Param			id	body		string	true	"Stream ID"
+// @Param			ct	body		string	true	"BASE64 encoded Ciphertext"
+// @Success		200	{object}	ConttributeAggregateResponse
+// @Failure		500
+// @Router			/contribute/aggregate/{id} [post]
 func (calc *calculator) contributeAggregate(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	flag, err := calc.calc_model.IDexists(id)
@@ -105,20 +142,44 @@ func (calc *calculator) contributeAggregate(w http.ResponseWriter, r *http.Reque
 	writeJSON(w, http.StatusOK, response)
 }
 
-// GET /snapshot/aggregate/{id}
+type ReturnAggregateRequest struct {
+	ID string `json:"id"`
+}
+
+type ReturnAggregateNoneAvailableResponse struct {
+	Message string `json:"message"`
+	ID      string `json:"id"`
+}
+
+type ReturnAggregateResponse struct {
+	ID                  string `json:"id"`
+	Ct_aggr_byte_base64 string `json:"ct_aggr_byte_base64"`
+	SampleSize          int    `json:"sample_size"`
+}
+
+// @Summary		Make a snapshot of an existing aggregate
+// @Description	Make a snapshot of an existing aggregate by ID
+// @Tags			BasicAPI
+// @Accept			json
+// @Produce		json
+// @Param			id	body		string	true	"Stream ID"
+// @Success		200	{object}	ReturnAggregateResponse
+// @Success		222	{object}	ReturnAggregateNoneAvailableResponse "Request successful, but no aggregate available. Try again later."
+// @Failure		500
+// @Router			/snapshot/aggregate/{id} [get]
 func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var agg *aggregator
 	if value, ok := calc.agg_map.Load(id); ok {
 		agg = value.(*aggregator)
 	} else {
-		response := map[string]string{"message": "No aggregate available yet. Try again later.", "id": id}
-		writeJSON(w, http.StatusOK, response)
+		response := &ReturnAggregateNoneAvailableResponse{Message: "Request successful, but no aggregate available. Try again later.", ID: id}
+		writeJSON(w, 222, response)
 		return
 	}
 	if agg.ct_aggr == nil {
-		response := map[string]string{"message": "No aggregate available yet. Try again later.", "id": id}
-		writeJSON(w, http.StatusOK, response)
+		response := &ReturnAggregateNoneAvailableResponse{Message: "Request successful, but no aggregate available. Try again later.", ID: id}
+		writeJSON(w, 222, response)
 		return
 	}
 	ct_aggr_byte := agg.snapshotAggregate()
@@ -139,8 +200,20 @@ func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// GET /public-key/{id}
-// Retrieves and returns the public key (base64-encoded) associated with the given ID.
+type GetPublicKeyResponse struct {
+	ID        string `json:"id"`
+	PublicKey string `json:"publicKey"`
+}
+
+// @Summary		Retrieve the public key associated with a given ID
+// @Description	Retrieve the public key (base64-encoded) associated with the given ID.
+// @Tags			BasicAPI
+// @Accept			json
+// @Produce		json
+// @Param			id	body		string	true	"Stream ID"
+// @Success		200	{object}	GetPublicKeyResponse
+// @Failure		500
+// @Router			/public-key/{id} [get]
 func (calc *calculator) getPublicKey(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	retrievedID, pkBytes, _, err := calc.calc_model.GetAggregationParamsByID(id)
