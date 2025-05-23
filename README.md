@@ -6,7 +6,7 @@ This framework can be described as a variation of "Encrypted Processing as a Ser
 
 Currently, this project is in its early alpha stage and includes only minimal functionality. Its sole purpose for now is to provide sufficient tools for people with no cryptographic expertise to experiment and prototype. Therefore, if you are such a person, you should primarily be interested in the other [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor) repository. The JavaScript functionality exposed by our WebAssembly-compiled modules provides sufficient tools to experiment with the full power of the engine without needing to worry about cryptographic configurations.
 
-You can find examples of the usage of this API here -- [encproc-decryptor examples](https://github.com/collapsinghierarchy/encproc-decryptor/tree/main/client-side).
+You can find examples of the usage of this API here -- [encproc-decryptor examples](https://github.com/collapsinghierarchy/encproc-decryptor/tree/main/client-side). The API is documented with swagger, see [Swagger Documentation](https://pseudocrypt.site/docs/).
 
 > **Note:** You must have access to a running encproc engine (see [encproc](https://github.com/collapsinghierarchy/encproc)) and a valid JWT token for authentication to begin experimenting. If you do not wish to set up your own engine, contact encproc@gmail.com for connection details. If you want to try the client-side examples, you can do so immediately, as they are preconfigured with a running instance. Currently, the project is in a highly experimental state and is not yet ready for production use. Visit the [Encproc Homepage](https://pseudocrypt.site/) to view the roadmap.
 
@@ -101,22 +101,6 @@ If you want to prototype and experiment with this engine, you can either run it 
 - **Using a Remote Instance**: If you are experimenting with a running instance hosted by someone else, you will need to register a data stream with the engine.
 
 For detailed instructions on how to use this engine, please refer to the client-side repository [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor). Below, we provide an overview of the API endpoints.
-
-## API Endpoints
-
-The API provides the following endpoints:
-
-- **`POST /create-stream`**:  
-  Create a new data stream. This endpoint requires a valid JWT token and a properly generated public key. It returns the registered stream ID.
-
-- **`POST /contribute/aggregate/{id}`**:  
-  Contribute encrypted data to a specific stream identified by `{id}`.
-
-- **`GET /snapshot/aggregate/{id}`**:  
-  Retrieve the aggregated result of a specific stream identified by `{id}`.
-
-- **`GET /public-key/{id}`**:  
-  Retrieve the public key associated with a specific stream identified by `{id}` for encryption purposes.
 
 ## Contributing
 
