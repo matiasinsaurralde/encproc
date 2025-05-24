@@ -5,13 +5,13 @@ FROM golang:latest
 WORKDIR /app
 
 # Copy go.mod and go.sum files
-COPY go.mod go.sum ./
+COPY ./engine/go.mod ./engine/go.sum ./
 
 # Download dependencies
 RUN go mod download
 
 # Copy the application source code
-COPY . .
+COPY ./engine .
 
 # Build the Go application
 RUN go build -o api-server .

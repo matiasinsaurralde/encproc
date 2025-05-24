@@ -105,9 +105,10 @@ func main() {
 	calc.logger.Info("starting server on :443")
 
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
-
-	logger.Error(err.Error())
-	os.Exit(1)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
 }
 
 // The openDB() function wraps sql.Open() and returns a sql.DB connection pool

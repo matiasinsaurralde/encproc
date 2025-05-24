@@ -1,15 +1,21 @@
 version: '3.8'
 
+secrets:
+  db_root_password:   { file: ./secrets/db_root_password.txt }
+  db_password:        { file: ./secrets/db_password.txt }
+  api_secret_key:     { file: ./secrets/secret_key.txt }
+
 services:
   db:
     image: mysql:8.0
     container_name: mysql-container
+    user: "999:999"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_DATABASE: mydb
       MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -17,6 +23,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    secrets:           
+      - db_root_password
+      - db_password
 
   api:
     build:
@@ -32,8 +41,10 @@ services:
       DB_PORT: 3306
       DB_NAME: mydb
       DB_USER: myuser
-      DB_PASSWORD: mypassword
-      SECRET_KEY: m9Lk5RgBq23rTpqZn8A1F9Us4qaMphzd1knmn1H3p6A=
-
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      SECRET_KEY_FILE: /run/secrets/api_secret_key
+    secrets:
+      - db_password
+      - api_secret_key
 volumes:
   db_data:
