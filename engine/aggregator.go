@@ -22,10 +22,18 @@ type aggregator struct {
 func (agg *aggregator) snapshotAggregate() []byte {
 	agg.mu.Lock()
 	defer agg.mu.Unlock()
+	if agg.ct_aggr == nil {
+		if agg.logger != nil {
+			agg.logger.Error("ct_aggr is nil, cannot serialize")
+		}
+		return nil
+	}
 	// Serialize the ciphertext
 	ct_aggr_byte, err := agg.ct_aggr.MarshalBinary()
 	if err != nil {
-		agg.logger.Error("failed to serialize ciphertext")
+		if agg.logger != nil {
+			agg.logger.Error("failed to serialize ciphertext")
+		}
 		return nil
 	}
 	return ct_aggr_byte
@@ -37,18 +45,24 @@ func (calc *calculator) initAggregator(pk []byte, params string) (*aggregator, e
 	// Deserialize the JSON into the struct
 	err := json.Unmarshal([]byte(params), &params_lit)
 	if err != nil {
-		calc.logger.Error("Error unmarshaling JSON Literal Params")
+		if calc.logger != nil {
+			calc.logger.Error("Error unmarshaling JSON Literal Params")
+		}
 		return &aggr, err
 	}
 	aggr.params, err = bgv.NewParametersFromLiteral(params_lit)
 	if err != nil {
-		calc.logger.Error("Error Converting Param Literatl to BGV.params")
+		if calc.logger != nil {
+			calc.logger.Error("Error Converting Param Literatl to BGV.params")
+		}
 		return &aggr, err
 	}
 	aggr.pk = rlwe.NewPublicKey(aggr.params)
 	err = aggr.pk.UnmarshalBinary(pk)
 	if err != nil {
-		calc.logger.Error("Error Converting pk []byte to rlwe.PublicKey")
+		if calc.logger != nil {
+			calc.logger.Error("Error Converting pk []byte to rlwe.PublicKey")
+		}
 		return &aggr, err
 	}
 	aggr.eval = bgv.NewEvaluator(aggr.params, nil)
@@ -64,6 +78,7 @@ func (agg *aggregator) aggregate(ct_bin []byte) error {
 	ct := &rlwe.Ciphertext{}
 	err = ct.UnmarshalBinary(ct_bin)
 	if err != nil {
+		agg.logger.Error("failed to deserialize ciphertext")
 		return err
 	}
 

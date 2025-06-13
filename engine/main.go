@@ -46,7 +46,7 @@ func main() {
 	})
 
 	//------------------ Init the database connections -----------------------
-	addr := getEnv("ADDR", ":443")
+	addr := getEnv("ADDR", ":1234")
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "3306")
 	dbName := getEnv("DB_NAME", "mydb")
@@ -72,7 +72,7 @@ func main() {
 
 	/*
 		* TLS Configuration
-			(05/2025) Regarding PQC-TLS: https://github.com/golang/go/issues/64537 --> Therefore we will have to stick with what's available now.
+			(05/2025) Regarding PQC: https://github.com/golang/go/issues/64537 --> Therefore we will have to stick with what's available now.
 	*/
 	tlsConfig := &tls.Config{
 		PreferServerCipherSuites: true,
@@ -104,11 +104,10 @@ func main() {
 
 	calc.logger.Info("starting server on :443")
 
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
-	if err != nil {
-		logger.Error(err.Error())
-		os.Exit(1)
-	}
+	//err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	err = srv.ListenAndServe()
+	logger.Error(err.Error())
+	os.Exit(1)
 }
 
 // The openDB() function wraps sql.Open() and returns a sql.DB connection pool
