@@ -1,7 +1,10 @@
+//go:build !openfhe
+
 package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"sync"
 
@@ -19,14 +22,14 @@ type aggregator struct {
 	mu      sync.Mutex
 }
 
-func (agg *aggregator) snapshotAggregate() []byte {
+func (agg *aggregator) snapshotAggregate() ([]byte, error) {
 	agg.mu.Lock()
 	defer agg.mu.Unlock()
 	if agg.ct_aggr == nil {
 		if agg.logger != nil {
 			agg.logger.Error("ct_aggr is nil, cannot serialize")
 		}
-		return nil
+		return nil, errors.New("no aggregate available")
 	}
 	// Serialize the ciphertext
 	ct_aggr_byte, err := agg.ct_aggr.MarshalBinary()
@@ -34,9 +37,9 @@ func (agg *aggregator) snapshotAggregate() []byte {
 		if agg.logger != nil {
 			agg.logger.Error("failed to serialize ciphertext")
 		}
-		return nil
+		return nil, err
 	}
-	return ct_aggr_byte
+	return ct_aggr_byte, nil
 }
 
 func (calc *calculator) initAggregator(pk []byte, params string) (*aggregator, error) {

@@ -10,12 +10,16 @@ import (
 	"sync"
 	"time"
 
+	"github.com/collapsinghierarchy/encproc/models"
 	"github.com/rs/cors"
 )
 
+// Make sure to import the interface if it's in another package, or define it here if local
+// type EncProcModelAPI interface { ... }
+
 type calculator struct {
 	logger        *slog.Logger
-	calc_model    *EncProcModel
+	calc_model    models.EncProcModelAPI // Use the interface here
 	jWTMiddleware *jWTMiddleware
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
 }
@@ -67,7 +71,7 @@ func main() {
 
 	calc := &calculator{
 		logger:     logger,
-		calc_model: &EncProcModel{DB: db},
+		calc_model: &models.EncProcModel{DB: db}, // This struct must implement EncProcModelAPI
 	}
 
 	/*
@@ -87,7 +91,7 @@ func main() {
 		},
 	}
 
-	calc.calc_model.initializeTables()
+	calc.calc_model.InitializeTables()
 	mux := calc.routes()
 
 	jwtMW := &jWTMiddleware{secretKey: []byte(jwt_sk)}
