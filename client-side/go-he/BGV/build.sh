@@ -6,7 +6,7 @@ export GOOS=js
 export GOARCH=wasm
 
 # output directory
-OUTDIR="$(dirname "$0")/web/wasm"
+OUTDIR="$(dirname "$0")/../web/go-wasm"
 
 # build each command
 go build -o "$OUTDIR/go-genkey.wasm"    ./genkey
