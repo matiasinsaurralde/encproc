@@ -25,7 +25,7 @@ func (calc *calculator) routes() http.Handler {
 
 	mux.Handle("GET /{$}", fileServer)
 	mux.HandleFunc("POST /create-stream", calc.createStream)
-	mux.HandleFunc("POST /contribute/aggregate/{id}", calc.contributeAggregate)
+	mux.HandleFunc("POST /contribute/aggregate", calc.contributeAggregate)
 	mux.HandleFunc("GET /snapshot/aggregate/{id}", calc.returnAggregate)
 	mux.HandleFunc("GET /public-key/{id}", calc.getPublicKey)
 

@@ -14,10 +14,10 @@ RUN go mod download
 COPY ./engine .
 
 # Build the Go application
-RUN go build -o api-server .
+RUN go build -o api-server . 
 
 # Expose the application port
-EXPOSE 443
+EXPOSE 1234
 
 # Run the application
 CMD ["./api-server"]

@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"database/sql"
@@ -18,8 +18,25 @@ type EncProcModel struct {
 	DB *sql.DB
 }
 
+type EncProcModelAPI interface {
+	InitializeTables()
+	InsertAggregationParams(id string, pk []byte, params string) error
+	UpdateAggregationParams(id string, pk []byte, params string) error
+	DeleteAggregationParams(id string) error
+	GetAggregationParamsByID(id string) (string, []byte, string, error)
+	IDexists(id string) (bool, error)
+	InsertAggregation(id string, ctAggr []byte, sampleSize int) error
+	GetAggregationsByID(id string) ([]struct {
+		ID         string
+		CtAggr     []byte
+		SampleSize int
+		CreatedAt  string
+	}, error)
+	DeleteAggregation(id string) error
+}
+
 // initializeTables creates the required tables if they do not exist.
-func (m *EncProcModel) initializeTables() {
+func (m *EncProcModel) InitializeTables() {
 	// Table: AggregationParams
 	aggregationParamsQuery := `
 	CREATE TABLE IF NOT EXISTS AggregationParams (

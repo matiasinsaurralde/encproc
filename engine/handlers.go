@@ -3,16 +3,12 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
 
 var def_parameter = `{"LogN":12,"LogQ":[58],"PlaintextModulus": 65537}`
-
-func (calc *calculator) home(w http.ResponseWriter, r *http.Request) {
-	// Use the new render helper.
-	w.Write([]byte("heyho"))
-}
 
 type CreateStreamRequest struct {
 	PK string `json:"pk"`
@@ -64,6 +60,7 @@ func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	calc.agg_map.Store(id, agg)
+	fmt.Printf("agg_map.Store: id=%s, agg=%p\n", id, agg)
 
 	response := map[string]string{"message": "Token Valid", "id": id}
 	writeJSON(w, http.StatusOK, response)
@@ -88,18 +85,8 @@ type ConttributeAggregateResponse struct {
 // @Param			ct	body		string	true	"BASE64 encoded Ciphertext"
 // @Success		200	{object}	ConttributeAggregateResponse
 // @Failure		500
-// @Router			/contribute/aggregate/{id} [post]
+// @Router			/contribute/aggregate [post]
 func (calc *calculator) contributeAggregate(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-	flag, err := calc.calc_model.IDexists(id)
-	if err != nil {
-		calc.serverError(w, r, err)
-		return
-	}
-	if !flag {
-		w.Write([]byte("Your ID is invalid."))
-		return
-	}
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		calc.serverError(w, r, err)
@@ -108,6 +95,18 @@ func (calc *calculator) contributeAggregate(w http.ResponseWriter, r *http.Reque
 	var payload map[string]string
 	if err := json.Unmarshal(body, &payload); err != nil {
 		calc.serverError(w, r, err)
+		return
+	}
+	id := payload["id"]
+	fmt.Print("contributeAggregate: id=", id, "\n")
+	flag, err := calc.calc_model.IDexists(id)
+	if err != nil {
+		calc.serverError(w, r, err)
+		return
+	}
+	if !flag {
+		response := &ReturnAggregateNoneAvailableResponse{Message: "Your ID is invalid!", ID: id}
+		writeJSON(w, 222, response)
 		return
 	}
 	ct_base64 := payload["ct"]
@@ -119,6 +118,7 @@ func (calc *calculator) contributeAggregate(w http.ResponseWriter, r *http.Reque
 	var agg *aggregator
 	if value, ok := calc.agg_map.Load(id); ok {
 		agg = value.(*aggregator)
+		fmt.Printf("agg_map.Load: id=%s, found=%v\n", id, ok)
 	} else {
 		// Initialize aggregator if not already present.
 		_, pkBytes, params, err := calc.calc_model.GetAggregationParamsByID(id)
@@ -170,11 +170,12 @@ type ReturnAggregateResponse struct {
 func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var agg *aggregator
+	fmt.Print("returnAggregate: id=", id, "\n")
 	if value, ok := calc.agg_map.Load(id); ok {
 		agg = value.(*aggregator)
 	} else {
 		response := &ReturnAggregateNoneAvailableResponse{Message: "Request successful, but no aggregate available. Try again later.", ID: id}
-		writeJSON(w, 222, response)
+		writeJSON(w, 221, response)
 		return
 	}
 	if agg.ct_aggr == nil {
@@ -182,8 +183,13 @@ func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) 
 		writeJSON(w, 222, response)
 		return
 	}
-	ct_aggr_byte := agg.snapshotAggregate()
-	err := calc.calc_model.InsertAggregation(id, ct_aggr_byte, agg.ctr)
+	ct_aggr_byte, err := agg.snapshotAggregate()
+	if err != nil {
+		response := &ReturnAggregateNoneAvailableResponse{Message: "Request successful, but no aggregate available. Try again later.", ID: id}
+		writeJSON(w, 223, response)
+		return
+	}
+	err = calc.calc_model.InsertAggregation(id, ct_aggr_byte, agg.ctr)
 	if err != nil {
 		calc.serverError(w, r, err)
 		return
