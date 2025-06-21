@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync/atomic"
 
 	"github.com/collapsinghierarchy/encproc/validator"
 )
 
 var def_parameter = `{"LogN":12,"LogQ":[58],"PlaintextModulus": 65537}`
+var thumbsUpCount int64 // global variable, or use sync/atomic for concurrency
 
 type CreateStreamRequest struct {
 	PK  string          `json:"pk"`
@@ -312,4 +314,16 @@ func (calc *calculator) streamDetails(w http.ResponseWriter, r *http.Request) {
 		// Add more stream details here as needed
 	}
 	writeJSON(w, http.StatusOK, response)
+}
+
+// Route handler to get the current thumbs up count
+func (calc *calculator) getThumbsUp(w http.ResponseWriter, r *http.Request) {
+	count := atomic.LoadInt64(&calc.thumbsUpCount)
+	writeJSON(w, http.StatusOK, map[string]int64{"count": count})
+}
+
+// Route handler to increment the thumbs up count
+func (calc *calculator) incrementThumbsUp(w http.ResponseWriter, r *http.Request) {
+	newCount := atomic.AddInt64(&calc.thumbsUpCount, 1)
+	writeJSON(w, http.StatusOK, map[string]int64{"count": newCount})
 }

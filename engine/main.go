@@ -23,6 +23,7 @@ type calculator struct {
 	jWTMiddleware *jWTMiddleware
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
 	aux_map       sync.Map // concurrent map: key string -> auxData
+	thumbsUpCount int64
 }
 
 //	@title			Encproc API engine

@@ -30,6 +30,8 @@ func (calc *calculator) routes() http.Handler {
 	mux.HandleFunc("GET /public-key/{id}", calc.getPublicKey)
 	mux.HandleFunc("GET /stream/{id}", calc.streamDetails)
 	mux.HandleFunc("GET /stream/{id}/{display}", calc.streamDetails)
+	mux.HandleFunc("GET /thumbs-up", calc.getThumbsUp)
+	mux.HandleFunc("POST /thumbs-up", calc.incrementThumbsUp)
 
 	// Create a middleware chain
 	standard := alice.New(calc.logRequest)

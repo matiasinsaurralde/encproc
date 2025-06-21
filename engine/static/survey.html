@@ -16,7 +16,9 @@
         <button id="copy-link-btn" type="button" style="padding:8px 16px;">Copy</button>
       </div>
     </div>
-    <button id="download-key-btn" class="button-download prominent-download" style="display:none;">Download Access File</button>
+    <div id="download-key-btn-wrapper" style="text-align:center; width:100%;">
+      <button id="download-key-btn" class="button-download" style="display:none;">Download Access File</button>
+    </div>
     <h2>Create Encrypted Survey (Numbers Only)</h2>
     <form id="survey-form" autocomplete="off">
       <div id="questions-list"></div>
@@ -42,6 +44,50 @@
       </ul>
       <div style="color:#888; font-size:0.98em; margin-top:1em;">
         This is an experimental demonstration of encrypted surveys. Please do not use it for sensitive or production data.
+      </div>
+    </div>
+    <div class="survey-comparison-section">
+      <h3 style="text-align:center; margin-bottom:1em;">Encproc Survey vs. Traditional Survey Platforms</h3>
+      <div class="survey-comparison-table">
+        <div class="comparison-row comparison-header">
+          <div class="comparison-cell"></div>
+          <div class="comparison-cell">Encproc Survey</div>
+          <div class="comparison-cell">Traditional Platforms<br><span style="font-size:0.95em; color:#888;">(SurveyMonkey, Mentimeter, Doodle, Lamapoll, Limesurvey, Tivian, ...)</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-feature">Individual Answer Confidentiality</div>
+          <div class="comparison-cell comparison-yes">Yes (Homomorphic)</div>
+          <div class="comparison-cell comparison-no">No</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-feature">Fully-fledged Survey Service</div>
+          <div class="comparison-cell comparison-no">Not Yet</div>
+          <div class="comparison-cell comparison-yes">Yes</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-feature">Survey Meta-Data Confidentiality</div>
+          <div class="comparison-cell comparison-no">Not Yet</div>
+          <div class="comparison-cell comparison-no">No</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-feature">Output Privacy (Differential Privacy et al.)</div>
+          <div class="comparison-cell comparison-no">Not Yet</div>
+          <div class="comparison-cell comparison-no">No</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-feature">Metadata Privacy (TOR et al.)</div>
+          <div class="comparison-cell comparison-no">Not Yet</div>
+          <div class="comparison-cell comparison-no">No</div>
+        </div>
+      </div>
+    </div>
+    <div class="thumbs-up-section" style="text-align:center; margin:2em 0;">
+      <button id="thumbs-up-btn" class="thumbs-up-btn" title="Support us!">
+        👍 Thumbs Up
+      </button>
+      <span id="thumbs-up-count" class="thumbs-up-count">0</span>
+      <div style="font-size:0.98em; color:#888; margin-top:0.5em;">
+        Click if you want to see the “Not Yet” features become reality!
       </div>
     </div>
   </div>

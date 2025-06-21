@@ -242,3 +242,103 @@
   background: linear-gradient(90deg, #218838 60%, #28a745 100%) !important;
   box-shadow: 0 6px 24px rgba(40,167,69,0.18) !important;
 }
+
+.survey-comparison-section {
+  margin: 2.5em 0 0 0;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 2em 1em 1.5em 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.survey-comparison-table {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.05em;
+}
+
+.comparison-row {
+  display: table-row;
+}
+
+.comparison-header {
+  font-weight: bold;
+  background: linear-gradient(90deg, #1976d2 60%, #0056b3 100%);
+  color: #fff;
+}
+
+.comparison-cell {
+  display: table-cell;
+  padding: 0.85em 1em;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.comparison-feature {
+  text-align: left;
+  font-weight: 500;
+  background: #f1f3f6;
+  color: #1976d2;
+}
+
+.comparison-yes {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.comparison-no {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.survey-comparison-table .comparison-header .comparison-cell {
+  border-bottom: 2px solid #1976d2;
+}
+
+#download-key-btn {
+  display: none;
+  font-size: 1.25em;
+  font-weight: bold;
+  background: linear-gradient(90deg, #1976d2 60%, #0056b3 100%);
+  color: #fff;
+  border: none;
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(25,118,210,0.12);
+  transition: background 0.2s, box-shadow 0.2s;
+  text-align: center;
+  cursor: pointer;
+  margin: 2em 0 1.5em 0; /* vertical spacing only */
+}
+
+#download-key-btn:hover {
+  background: linear-gradient(90deg, #0056b3 60%, #1976d2 100%);
+  box-shadow: 0 6px 24px rgba(25,118,210,0.18);
+}
+
+.thumbs-up-btn {
+  font-size: 1.3em;
+  background: linear-gradient(90deg, #ffd600 60%, #ffb300 100%);
+  color: #333;
+  border: none;
+  border-radius: 2em;
+  padding: 0.7em 2em;
+  margin-right: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255,214,0,0.10);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.thumbs-up-btn:hover {
+  background: linear-gradient(90deg, #ffb300 60%, #ffd600 100%);
+  box-shadow: 0 4px 16px rgba(255,214,0,0.18);
+}
+.thumbs-up-count {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #ff9800;
+  vertical-align: middle;
+}

@@ -150,7 +150,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
       keyStatus.textContent = '';
       result.style.display = 'block';
-      result.innerHTML = `<strong>Survey created!</strong>`;
+      result.innerHTML = `<strong>Survey created! Don't forget to download the Access File. Without it the answers will be lost.</strong>`;
 
       // HIDE the form after successful creation
       form.style.display = 'none';
@@ -205,4 +205,23 @@ window.addEventListener('DOMContentLoaded', async () => {
     keyStatus.style.color = '#dc3545';
     return;
   }
+
+  async function updateThumbsUpCount() {
+    try {
+      const resp = await fetch(`${baseUrl}/thumbs-up`);
+      const data = await resp.json();
+      document.getElementById('thumbs-up-count').textContent = data.count;
+    } catch {}
+  }
+
+  document.getElementById('thumbs-up-btn').addEventListener('click', async () => {
+    try {
+      const resp = await fetch(`${baseUrl}/thumbs-up`, { method: 'POST' });
+      const data = await resp.json();
+      document.getElementById('thumbs-up-count').textContent = data.count;
+    } catch {}
+  });
+
+  // Initialize on page load
+  updateThumbsUpCount();
 });
