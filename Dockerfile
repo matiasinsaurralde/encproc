@@ -13,6 +13,8 @@ RUN go mod download
 # Copy the application source code
 COPY ./engine .
 
+RUN chmod 600 ./tls/privkey.pem
+
 # Build the Go application
 RUN go build -o api-server . 
 

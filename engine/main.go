@@ -14,12 +14,9 @@ import (
 	"github.com/rs/cors"
 )
 
-// Make sure to import the interface if it's in another package, or define it here if local
-// type EncProcModelAPI interface { ... }
-
 type calculator struct {
 	logger        *slog.Logger
-	calc_model    models.EncProcModelAPI // Use the interface here
+	calc_model    models.EncProcModelAPI
 	jWTMiddleware *jWTMiddleware
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
 	aux_map       sync.Map // concurrent map: key string -> auxData
@@ -44,7 +41,7 @@ func main() {
 		AddSource: true,
 	}))
 
-	// Allow all origins, adjust as needed
+	//------------------ Init the CORS Middleware -----------------------
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
