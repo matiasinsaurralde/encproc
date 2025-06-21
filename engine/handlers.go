@@ -75,17 +75,17 @@ func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
 		calc.serverError(w, r, err)
 		return
 	}
-	err = calc.calc_model.InsertAggregationParams(id, publicKeyBytes, def_parameter)
-	if err != nil {
-		calc.serverError(w, r, err)
-		return
-	}
 	agg, err := calc.initAggregator(publicKeyBytes, def_parameter)
 	if err != nil {
 		calc.serverError(w, r, err)
 		return
 	}
 	calc.agg_map.Store(id, agg)
+	err = calc.calc_model.InsertAggregationParams(id, publicKeyBytes, def_parameter)
+	if err != nil {
+		calc.serverError(w, r, err)
+		return
+	}
 
 	response := map[string]string{"message": "Token Valid", "id": id}
 	writeJSON(w, http.StatusOK, response)
