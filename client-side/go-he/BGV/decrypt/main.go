@@ -16,7 +16,7 @@ func main() {
 	he.Params = gojshe.SetupParams()
 
 	// Exported encrypt function
-	encryptFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	decryptFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		// Validate input
 		if len(args) < 2 {
 			return js.ValueOf("Error: Ciphertext and Secret key are required")
@@ -60,7 +60,7 @@ func main() {
 	})
 
 	// Expose the `encrypt` function to JavaScript
-	js.Global().Set("decrypt_result", encryptFunc)
+	js.Global().Set("eng_decrypt", decryptFunc)
 
 	// Keep the WASM module running
 	select {}

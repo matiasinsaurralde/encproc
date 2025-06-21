@@ -1,0 +1,43 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Encrypted Survey</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/participate.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Encrypted Survey</h1>
+    <form id="survey-form">
+      <div id="questions"></div>
+      <button type="submit" class="btn primary">Submit</button>
+    </form>
+    <div id="status" class="status"></div>
+    <div class="survey-limitations">
+      <h3 style="margin-top:0;">How Your Answers Are Handled</h3>
+      <ul>
+        <li>
+          <strong>Encrypted aggregation:</strong>
+          Your answers are aggregated in encrypted form on the server. Only the survey creator, who holds the decryption key, can request and decrypt the aggregate results. No one else can decrypt your responses.
+        </li>
+      </ul>
+      <h3>Current Limitations</h3>
+      <ul>
+        <li><strong>No single choice or multiple choice questions:</strong> Only number questions with min/max boundaries are supported at this time.</li>
+        <li><strong>No free-text responses:</strong> It is not yet possible to collect or encrypt free-text answers.</li>
+        <li><strong>Communication is not private:</strong> Survey participation and result retrieval are not protected by anonymization or end-to-end encryption of metadata. Network-level observers and the server can see who participates and when.</li>
+        <li><strong>Output privacy is not addressed:</strong> While individual responses are encrypted, the aggregated results may still leak information about participants. Future versions will address output privacy.</li>
+      </ul>
+      <div class="survey-limitations-note">
+        This is an experimental demonstration of encrypted surveys. Please do not use it for sensitive or production data.
+      </div>
+    </div>
+  </div>
+  <script src="/static/wasm_exec.js"></script>
+  <script src="/static/go_encryption.js"></script>
+  <script src="/static/participate.js"></script>
+</body>
+</html>

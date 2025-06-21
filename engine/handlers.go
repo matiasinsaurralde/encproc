@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/collapsinghierarchy/encproc/validator"
 )
 
 var def_parameter = `{"LogN":12,"LogQ":[58],"PlaintextModulus": 65537}`
 
 type CreateStreamRequest struct {
-	PK string `json:"pk"`
+	PK  string          `json:"pk"`
+	Aux json.RawMessage `json:"aux,omitempty"`
 }
 
 type CreateStreamResponse struct {
@@ -30,25 +33,46 @@ type CreateStreamResponse struct {
 // @Router			/create-stream [post]
 // @Security		APIKeyAuth
 func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		calc.serverError(w, r, err)
+	var req CreateStreamRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		calc.serverError(w, r, err) // bad JSON → 400/500
 		return
 	}
-	// Parse the JSON to extract the publicKey field
-	var payload map[string]string
-	if err := json.Unmarshal(body, &payload); err != nil {
-		calc.serverError(w, r, err)
+	v := &validator.Validator{}
+
+	// ── validate pk ────────────────────────────────────────────────
+	if !validator.NotBlank(req.PK) {
+		v.AddFieldError("pk", "must be provided")
+	}
+
+	// ── validate aux (if supplied) ────────────────────────────────
+	if len(req.Aux) > 0 {
+		fmt.Print("createStream: aux=", string(req.Aux), "\n")
+		// TODO: No validation, just store as-is. Potentially dangerous. (XSS vulnerability)
+	}
+
+	if !v.Valid() {
+		response := map[string]interface{}{
+			"message": "Invalid request",
+			"errors":  v.FieldErrors,
+		}
+		writeJSON(w, http.StatusBadRequest, response)
 		return
 	}
-	publicKeyBase64 := payload["pk"]
+	id := generateFreshID()
+	calc.aux_map.Store(id, req.Aux)
+	publicKeyBase64 := req.PK
+	if publicKeyBase64 == "" {
+		response := map[string]string{"error": "Public key must be provided"}
+		writeJSON(w, http.StatusBadRequest, response)
+		return
+	}
 	// Decode the base64-encoded public key
 	publicKeyBytes, err := base64.StdEncoding.DecodeString(publicKeyBase64)
 	if err != nil {
 		calc.serverError(w, r, err)
 		return
 	}
-	id := generateFreshID()
 	err = calc.calc_model.InsertAggregationParams(id, publicKeyBytes, def_parameter)
 	if err != nil {
 		calc.serverError(w, r, err)
@@ -60,7 +84,6 @@ func (calc *calculator) createStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	calc.agg_map.Store(id, agg)
-	fmt.Printf("agg_map.Store: id=%s, agg=%p\n", id, agg)
 
 	response := map[string]string{"message": "Token Valid", "id": id}
 	writeJSON(w, http.StatusOK, response)
@@ -170,7 +193,6 @@ type ReturnAggregateResponse struct {
 func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var agg *aggregator
-	fmt.Print("returnAggregate: id=", id, "\n")
 	if value, ok := calc.agg_map.Load(id); ok {
 		agg = value.(*aggregator)
 	} else {
@@ -194,11 +216,19 @@ func (calc *calculator) returnAggregate(w http.ResponseWriter, r *http.Request) 
 		calc.serverError(w, r, err)
 		return
 	}
+	auxVal, ok := calc.aux_map.Load(id)
+	if !ok {
+		//TODO: acutally its a panic situation...
+		response := &ReturnAggregateNoneAvailableResponse{Message: "No Aux data found", ID: id}
+		writeJSON(w, 221, response)
+		return
+	}
 	base64_ct := base64.StdEncoding.EncodeToString(ct_aggr_byte)
 	response := map[string]interface{}{
 		"id":                  id,
 		"ct_aggr_byte_base64": base64_ct,
 		"sample_size":         agg.ctr,
+		"aux":                 auxVal, // value is json.RawMessage, so this will be valid JSON
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -228,11 +258,58 @@ func (calc *calculator) getPublicKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if retrievedID == "" {
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "ID not found"})
-		calc.serverError(w, r, err)
+		response := &ReturnAggregateNoneAvailableResponse{Message: "ID not found", ID: id}
+		writeJSON(w, 221, response)
+		return
+	}
+	//	var value json.RawMessage
+	auxVal, ok := calc.aux_map.Load(id)
+	if !ok {
+		//TODO: acutally its a panic situation...
+		response := &ReturnAggregateNoneAvailableResponse{Message: "No Aux data found", ID: id}
+		writeJSON(w, 221, response)
 		return
 	}
 	pkBase64 := base64.StdEncoding.EncodeToString(pkBytes)
-	response := map[string]string{"id": retrievedID, "publicKey": pkBase64}
+	response := map[string]interface{}{
+		"id":        retrievedID,
+		"publicKey": pkBase64,
+		"aux":       auxVal, // value is json.RawMessage, so this will be valid JSON
+	}
+	writeJSON(w, http.StatusOK, response)
+}
+
+// streamDetails serves stream info or the participate page depending on {display}
+func (calc *calculator) streamDetails(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	display := r.PathValue("display") // will be "" if not present
+
+	if display == "contribute" {
+		//check if aux data is available
+		_, ok := calc.aux_map.Load(id)
+		if !ok {
+			response := &ReturnAggregateNoneAvailableResponse{Message: "No Aux data found", ID: id}
+			writeJSON(w, 221, response)
+			return
+		}
+		// Serve participate.html
+		http.ServeFile(w, r, "./static/participate.html")
+		return
+	}
+
+	// Otherwise, return stream details as JSON (example)
+	// You can customize this to return whatever stream info you want
+	_, pkBytes, _, err := calc.calc_model.GetAggregationParamsByID(id)
+	if err != nil {
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "Stream not found"})
+		return
+	}
+	pkBase64 := base64.StdEncoding.EncodeToString(pkBytes)
+	response := map[string]interface{}{
+		"id":         id,
+		"publicKey":  pkBase64,
+		"parameters": def_parameter,
+		// Add more stream details here as needed
+	}
 	writeJSON(w, http.StatusOK, response)
 }

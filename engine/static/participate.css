@@ -1,0 +1,338 @@
+:root {
+  /* Material-inspired palette */
+  --primary: #6200ee;
+  --primary-light: #9d46ff;
+  --primary-dark:  #0a00b6;
+  --surface: #ffffff;
+  --bg: #fafafa;
+  --text-primary: #212121;
+  --text-secondary: #616161;
+  --error: #b00020;
+
+  --radius: 4px;
+  --transition: 0.3s ease;
+
+  /* Elevation shadows */
+  --e1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --e2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 600px;
+  margin: 48px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  margin-bottom: 32px;
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--primary);
+}
+
+form {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--e2);
+}
+
+.question-card {
+  margin-bottom: 24px;
+}
+
+.question-card label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.question-card input[type="text"],
+.question-card input[type="email"],
+.question-card input[type="number"],
+.question-card textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--text-secondary);
+  padding: 8px 4px;
+  font-size: 1rem;
+  background: transparent;
+  transition: border-color var(--transition);
+}
+
+.question-card input:focus,
+.question-card textarea:focus {
+  outline: none;
+  border-bottom: 2px solid var(--primary);
+}
+
+.choice-group {
+  display: flex;
+  gap: 16px;
+}
+
+.choice-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  margin-top: 16px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--e1);
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.btn:hover {
+  background: var(--primary-light);
+  box-shadow: var(--e2);
+}
+
+/* If you still want a simple “icon” style, you can use an ::before with a unicode glyph */
+.btn.icon::before {
+  content: "🔒";  /* lock emoji, for example */
+}
+
+.status {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.status.error {
+  color: var(--error);
+}
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*  Custom Radios & Checkboxes                           */
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+.choice-group input[type="radio"],
+.choice-group input[type="checkbox"] {
+  /* remove native control */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* sizing & layout */
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  margin-right: 8px;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+/* base border */
+.choice-group input[type="radio"],
+.choice-group input[type="checkbox"] {
+  border: 2px solid var(--text-secondary);
+  background: transparent;
+}
+
+/* RADIO – circular */
+.choice-group input[type="radio"] {
+  border-radius: 50%;
+}
+.choice-group input[type="radio"]::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  position: absolute;
+  top: 50%;  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform var(--transition);
+}
+.choice-group input[type="radio"]:checked::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* CHECKBOX – square + checkmark */
+.choice-group input[type="checkbox"] {
+  border-radius: 4px;
+}
+.choice-group input[type="checkbox"]::after {
+  content: "";
+  width: 6px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  transform: scale(0) rotate(45deg);
+  transition: transform var(--transition);
+}
+.choice-group input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.choice-group input[type="checkbox"]:checked::after {
+  transform: scale(1) rotate(45deg);
+}
+
+/* focus rings */
+.choice-group input[type="radio"]:focus,
+.choice-group input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(98, 0, 238, 0.2);
+}
+
+/* keep label text aligned */
+.choice-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*  Custom Selects                                       */
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/* wrapper around the <select> */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* hide native arrow */
+.select-wrapper select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--text-secondary);
+  padding: 8px 4px;
+  font-size: 1rem;
+  background: transparent;
+  appearance: none;
+  transition: border-color var(--transition);
+  cursor: pointer;
+}
+
+.select-wrapper select:focus {
+  outline: none;
+  border-bottom: 2px solid var(--primary);
+}
+
+/* custom arrow */
+.select-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--text-secondary);
+  border-bottom: 2px solid var(--text-secondary);
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  transition: border-color var(--transition);
+}
+
+.select-wrapper select:focus + .select-wrapper::after,
+.select-wrapper select:focus ~ .select-wrapper::after {
+  border-color: var(--primary);
+}
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*  Usage notes:                                         */
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*
+1. Radios & Checkboxes:
+   - Wrap each <input> inside a <label> (you already have .choice-group).
+   - No extra markup needed.
+
+2. Select:
+   <div class="select-wrapper">
+     <select name="my-select">
+       <option>Option A</option>
+       <option>Option B</option>
+     </select>
+     <!-- the ::after arrow lives on the wrapper -->
+   </div>
+
+Drop this into your CSS (and wrap your <select> as shown) and all of your controls will have that slick Material feel—no third-party assets required.
+*/
+.survey-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.survey-limitations {
+  margin-top: 2.5em;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.5em;
+}
+
+.survey-limitations h3 {
+  margin-top: 0;
+  margin-bottom: 1em;
+  color: #1976d2;
+  font-size: 1.18em;
+}
+
+.survey-limitations ul {
+  margin: 0 0 1.2em 1.2em;
+  padding: 0;
+  color: #444;
+  font-size: 1.05em;
+}
+
+.survey-limitations ul:last-of-type {
+  margin-bottom: 0;
+}
+
+.survey-limitations li {
+  margin-bottom: 0.7em;
+}
+
+.survey-limitations-note {
+  color: #888;
+  font-size: 0.98em;
+  margin-top: 1em;
+}
+

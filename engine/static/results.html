@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey Results</title>
+  <link rel="stylesheet" href="results.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Survey Results</h2>
+    <div id="status" class="status"></div>
+    <p>Select your access file to load and decrypt survey results:</p>
+    <input type="file" id="access-file-input" accept=".json" />
+    <div id="results-container"></div>
+  </div>
+
+  <!-- Go WASM runtime and decryption library -->
+  <script src="wasm_exec.js"></script>
+  <script src="go_decryption.js"></script>
+  <script src="results.js"></script>
+</body>
+</html>

@@ -22,6 +22,7 @@ type calculator struct {
 	calc_model    models.EncProcModelAPI // Use the interface here
 	jWTMiddleware *jWTMiddleware
 	agg_map       sync.Map // concurrent map: key string -> *aggregator
+	aux_map       sync.Map // concurrent map: key string -> auxData
 }
 
 //	@title			Encproc API engine
@@ -106,7 +107,7 @@ func main() {
 		TLSConfig:    tlsConfig,
 	}
 
-	calc.logger.Info("starting server on :443")
+	calc.logger.Info("starting server on :1234")
 
 	//err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	err = srv.ListenAndServe()

@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Encrypted Processing API Engine</title>
+  <title>Encrypted Processing API Engine | Homomorphic Encryption for Privacy-Preserving Processing</title>
+  <meta name="description" content="The Encrypted Processing API Engine enables privacy-preserving, homomorphic encryption-based surveys and data aggregation. Create encrypted surveys, collect responses, and decrypt results securely.">
+  <meta name="keywords" content="homomorphic encryption, privacy, encrypted survey, data-in-use, secure computation, API, Lattigo, OpenFHE, aggregation, cryptography, EncProc">
+  <meta name="author" content="EncProc Team">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://yourdomain.example.com/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Encrypted Processing API Engine">
+  <meta property="og:description" content="Privacy-preserving, homomorphic encryption-based surveys and data aggregation. Create encrypted surveys, collect responses, and decrypt results securely.">
+  <meta property="og:url" content="https://yourdomain.example.com/">
+  <meta property="og:image" content="https://yourdomain.example.com/static/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Encrypted Processing API Engine">
+  <meta name="twitter:description" content="Privacy-preserving, homomorphic encryption-based surveys and data aggregation. Create encrypted surveys, collect responses, and decrypt results securely.">
+  <meta name="twitter:image" content="https://yourdomain.example.com/static/og-image.png">
+
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -14,55 +33,47 @@
     </div>
   </header>
 
-  <section id="roadmap">
-    <div class="container">
-      <h2>Roadmap</h2>
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-card">
-            <h3>Current Features</h3>
-            <p>Fully-fledged RESTful Survey Example</p>
-            <p>BGV encryption from Lattigo with fixed parameterization</p>
-            <p>A generic aggregation API</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-card">
-            <h3>Milestone 1</h3>
-            <p>Testing and bug fixes</p>
-            <p>TLS support for the API</p>
-            <p>Multiple fixed parameterization options</p>
-            <p>Additional usage examples</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-card">
-            <h3>Milestone 2</h3>
-            <p>Integration of CCKS</p>
-            <p>Configurable parameterization (BGV/CKKS)</p>
-            <p>Additional functionalities (mean, variance, standard deviation)</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-card">
-            <h3>Milestone 3</h3>
-            <p>Configurable SIMD encoding</p>
-            <p>Introduction of output privacy mechanisms</p>
-            <p>Additional functionalities (set intersection, matching, and various distance metrics)</p>
-            <p>WASM compression</p>
-            <p>Additional usage examples</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-card">
-            <h3>Milestone 4</h3>
-            <p>DSL for non-cryptographers enabling fully automated parameterization and SIMD encoding</p>
-          </div>
-        </div>
+<section id="encrypted-survey" style="margin-top:2em;">
+  <div class="container">
+    <div class="survey-header" style="text-align:center; margin-bottom: 1.5em;">
+      <h2>Encrypted Survey</h2>
+    </div>
+    <div class="repo-grid">
+      <a href="/static/survey.html" target="_blank" class="repo-card">
+        <h3>Create a New Encrypted Survey</h3>
+        <p>
+          Create your own survey, generate a participation link, and download the access file for decryption.
+        </p>
+      </a>
+      <a href="/static/results.html" target="_blank" class="repo-card">
+        <h3>View and Decrypt Survey Results</h3>
+        <p>
+          Upload your access file to decrypt and analyze the aggregated survey results.
+        </p>
+      </a>
+    </div>
+    <div class="clarifications">
+      <div>
+        <h2>What is an "Encrypted Survey"?</h2>
+        <p>
+          Traditional web-service surveys collect responses from users, which are then aggregated and analyzed by the service provider in cleartext. This means that responses are at risk of misuse by the provider, with only organizational policies as a deterrent. An "Encrypted Survey" addresses this issue by encrypting responses using homomorphic encryption, allowing the provider to aggregate and analyze data without accessing individual answers. This ensures user privacy while still enabling meaningful data analysis. The current implementation is highly experimental (including the homomorphic encryption part) and is intended only to demonstrate the concept. It is not suitable for production use, as it does not yet address all privacy concerns and has several limitations.
+        </p>
+        <h2>An Incomplete Solution — E2EE of Auxiliary Data and Free Text Responses</h2>
+        <p>
+          Currently, it is not possible to encrypt free-text responses or other auxiliary data (such as user IDs, timestamps, etc.). While individual responses are encrypted, the provider can still access and analyze auxiliary data, which may contain sensitive information. This is a limitation of the current implementation, but future versions will introduce mechanisms for encrypting auxiliary data and free-text responses. For a solution to be scalable for millions of there is some brainstorming to be done, and we are open to suggestions. The current implementation is designed to handle simple surveys with fixed options, such as multiple-choice questions, but it does not yet support more complex survey structures.
+        </p>
+        <h2>An Incomplete Solution — Output Privacy</h2>
+        <p>
+          While the confidentiality of responses is preserved, the survey creator still has access to the aggregated results. This means that, although individual responses are protected, aggregate results can still leak information about individual answers. This can (and will) be addressed in the future with output privacy mechanisms. Even without these, encrypted surveys are a significant improvement over traditional surveys, as they prevent the provider from accessing individual responses.
+        </p>
+        <h2>An Incomplete Solution — Metadata Privacy</h2>
+        <p>
+          Even if response confidentiality and output privacy are ensured, metadata privacy remains an issue. This includes information such as the number of responses, submission times, and other potentially sensitive data that could be used to infer information about respondents. The current implementation does not address this, but future development will consider optional data contribution mechanisms over Tor and evaluate other proxy-related solutions, such as OHTTP (Oblivious HTTP) or similar protocols, to enhance metadata privacy.
+        </p>
       </div>
     </div>
-  </section>
-
+  </div>
+</section>
   <section id="github">
     <div class="container">
       <h2>GitHub Repositories</h2>
@@ -70,10 +81,6 @@
         <a href="https://github.com/collapsinghierarchy/encproc" target="_blank" class="repo-card">
           <h3>EncProc API Engine</h3>
           <p>Core functionality of the API engine.</p>
-        </a>
-        <a href="https://github.com/collapsinghierarchy/encproc-decryptor" target="_blank" class="repo-card">
-          <h3>EncProc Decryptor</h3>
-          <p>Client-side components for communicating with the EncProc engine.</p>
         </a>
       </div>
     </div>
@@ -87,6 +94,9 @@
         </blockquote>
         <blockquote>
           <p><em>"Big companies and the government already know everything about me, so why bother?"</em> <span class="gray-text">(until there’s a data breach, a political shift (USA 2025), or an employee abuses access—but it’ll never happen to me, right?).</span></p>
+        </blockquote>
+        <blockquote>
+          <p><em>"TLS is not always necessary!"</em> <span class="gray-text">(Until one of your clients get's mitmed)</span></p>
         </blockquote>
         <div>
           <h2>What's It About?</h2>
@@ -150,6 +160,56 @@
       </div>
     </div>
   </section>
+
+  <section id="roadmap">
+    <div class="container">
+      <h2>Roadmap</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Current Features</h3>
+            <p>Fully-fledged RESTful Survey Example</p>
+            <p>TLS support for the API</p>
+            <p>BGV encryption from Lattigo & OpenFHE with fixed parameterization</p>
+            <p>A generic aggregation API</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 1</h3>
+            <p>Testing and bug fixes</p>
+            <p>Multiple fixed parameterization options</p>
+            <p>Additional usage examples</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 2</h3>
+            <p>Integration of CCKS</p>
+            <p>Configurable parameterization (BGV/CKKS)</p>
+            <p>Additional functionalities (mean, variance, standard deviation)</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 3</h3>
+            <p>Configurable SIMD encoding</p>
+            <p>Introduction of output privacy mechanisms</p>
+            <p>Additional functionalities (set intersection, matching, and various distance metrics)</p>
+            <p>WASM compression</p>
+            <p>Additional usage examples</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <h3>Milestone 4</h3>
+            <p>DSL for non-cryptographers enabling fully automated parameterization and SIMD encoding</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
     <footer>
         <div class="container">

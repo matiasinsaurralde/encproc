@@ -28,6 +28,8 @@ func (calc *calculator) routes() http.Handler {
 	mux.HandleFunc("POST /contribute/aggregate", calc.contributeAggregate)
 	mux.HandleFunc("GET /snapshot/aggregate/{id}", calc.returnAggregate)
 	mux.HandleFunc("GET /public-key/{id}", calc.getPublicKey)
+	mux.HandleFunc("GET /stream/{id}", calc.streamDetails)
+	mux.HandleFunc("GET /stream/{id}/{display}", calc.streamDetails)
 
 	// Create a middleware chain
 	standard := alice.New(calc.logRequest)

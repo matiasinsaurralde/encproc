@@ -1,4 +1,4 @@
-package keygen
+package main
 
 import (
 	"encoding/base64"

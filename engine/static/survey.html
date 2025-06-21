@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Create New Survey</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/survey.css" />
+</head>
+<body>
+  <div class="container" style="max-width: 560px">
+    <div id="participation-link" style="display:none;">
+      <label for="participation-link-input" style="font-weight:bold;">Participation Link:</label>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;">
+        <input id="participation-link-input" type="text" readonly style="font-size:1.1em;width:70%;padding:8px;" />
+        <button id="copy-link-btn" type="button" style="padding:8px 16px;">Copy</button>
+      </div>
+    </div>
+    <button id="download-key-btn" class="button-download prominent-download" style="display:none;">Download Access File</button>
+    <h2>Create Encrypted Survey (Numbers Only)</h2>
+    <form id="survey-form" autocomplete="off">
+      <div id="questions-list"></div>
+      <button type="button" class="add-btn" id="add-question-btn">+ Add Question</button>
+      <div id="keypair-status" class="muted"></div>
+      <button type="submit" class="main-btn" id="create-btn">Create Survey</button>
+    </form>
+    <div id="result" style="margin-top:2em"></div>
+    <div class="survey-limitations" style="margin-top:2.5em; background:#f8f9fa; border:1px solid #e0e0e0; border-radius:10px; padding:1.5em;">
+      <h3 style="margin-top:0;">How Survey Results Are Handled</h3>
+      <ul style="margin:0 0 1.2em 1.2em; padding:0; color:#444; font-size:1.05em;">
+        <li>
+          <strong>Encrypted aggregation:</strong>
+          All answers are aggregated in encrypted form on the server. Only you, as the survey creator (with the access file), can request and decrypt the aggregate results. No one else can decrypt the responses.
+        </li>
+      </ul>
+      <h3 style="margin-top:1.5em;">Current Limitations</h3>
+      <ul style="margin:0 0 0 1.2em; padding:0; color:#444; font-size:1.05em;">
+        <li><strong>No single choice or multiple choice questions:</strong> Only number questions with min/max boundaries are supported at this time.</li>
+        <li><strong>No free-text responses:</strong> It is not yet possible to collect or encrypt free-text answers.</li>
+        <li><strong>Communication is not private:</strong> Survey participation and result retrieval are not protected by anonymization or end-to-end encryption of metadata. Network-level observers and the server can see who participates and when.</li>
+        <li><strong>Output privacy is not addressed:</strong> While individual responses are encrypted, the aggregated results may still leak information about participants. Future versions will address output privacy.</li>
+      </ul>
+      <div style="color:#888; font-size:0.98em; margin-top:1em;">
+        This is an experimental demonstration of encrypted surveys. Please do not use it for sensitive or production data.
+      </div>
+    </div>
+  </div>
+  <script src="/static/wasm_exec.js"></script>
+  <script src="/static/go_genkey.js"></script>
+  <script src="/static/survey.js"></script>
+</body>
+</html>
