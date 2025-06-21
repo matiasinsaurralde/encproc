@@ -4,7 +4,7 @@
 
 This framework can be described as a variation of "Encrypted Processing as a Service" (EPaaS). A key aspect of this concept is the "separation of duties" assumption, which ensures that the server processing encrypted data does not have access to the secret key and ideally even doesn't learn the decryption results. To achieve this, client-side components (compiled in WebAssembly format) are provided. These can be used programmatically outside the server's reach to produce ciphertexts, which the server processes by invoking appropriate APIs.
 
-Currently, this project is in its early alpha stage and includes only minimal functionality. Its sole purpose for now is to provide sufficient tools for people with no cryptographic expertise to experiment and prototype. Therefore, if you are such a person, you should primarily be interested in the other [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor) repository. The JavaScript functionality exposed by our WebAssembly-compiled modules provides sufficient tools to experiment with the full power of the engine without needing to worry about cryptographic configurations.
+Currently, this project is in its early alpha stage and includes only minimal functionality. Its sole purpose for now is to provide sufficient tools for people with no cryptographic expertise to experiment and prototype. The JavaScript functionality exposed by our WebAssembly-compiled modules provides sufficient tools to experiment with the full power of the engine without needing to worry about cryptographic configurations.
 
 The API is also documented with swagger, see [Swagger Documentation](https://pseudocrypt.site/docs/).
 
@@ -36,14 +36,21 @@ If you want to prototype and experiment with this engine, you can either run it 
 - **Running Locally**: If you are running the engine locally, you may disable the authorization middleware in the source code for easier experimentation.
 - **Using a Remote Instance**: If you are experimenting with a running instance hosted by someone else, you will need to register a data stream with the engine.
 
-For detailed instructions on how to use this engine, please refer to the client-side repository [encproc-decryptor](https://github.com/collapsinghierarchy/encproc-decryptor). Below, we provide an overview of the API endpoints.
+For detailed instructions on how to use this engine, please refer to the documentation and examples provided in this repository. Below, we provide an overview of the API endpoints.
+
+## OpenFHE Functionality
+
+In addition to Lattigo, **encproc** is being extended to support [OpenFHE](https://github.com/openfheorg/openfhe-development), a widely used open-source library for homomorphic encryption. OpenFHE provides a rich set of features and supports multiple HE schemes, including BFV, CKKS, and BGV, enabling more flexible and efficient encrypted computations.
+
+The integration of OpenFHE into encproc is ongoing and experimental. This will allow users to choose between different HE backends according to their requirements and benefit from the latest advancements in the homomorphic encryption community. As with the Lattigo-based functionality, OpenFHE operations are exposed through the same API and client-side WASM modules, making it easy to experiment with both libraries.
+
+> **Note:** The OpenFHE functionality is currently in an early stage and may not be as stable or feature-complete as the Lattigo integration. We welcome feedback and contributions from the community to help improve and expand this support.
 
 ## License
 
 This project is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE) file for details.
 
-- [encproc decryptor Repository](https://github.com/collapsinghierarchy/encproc-decryptor) -- The client side part that harnesses the powers of the encrypted processing as a service engine.
-- [Encproc Homepage](https://pseudocrypt.site/) -- The hompage of this project with a roadmap and an introduction to the overall encproc project.
+- [Encproc Homepage](https://pseudocrypt.site/) -- The homepage of this project with a roadmap and an introduction to the overall encproc project.
 - Contact: encproc@gmail.com
 
 Happy encrypted processing!
