@@ -1,6 +1,6 @@
 # encproc
 
-**encproc** is a homomorphic encryption library wrapper built in Go, currently utilizing the [Lattigo](https://github.com/tuneinsight/lattigo) library. It leverages homomorphic encryption (currently using Lattigo's BGV scheme) to securely process encrypted data streams and integrates with a MySQL database. The project is containerized using Docker.
+**encproc** is a homomorphic encryption library wrapper built in Go, currently utilizing the [Lattigo](https://github.com/tuneinsight/lattigo) and [openfhe](https://github.com/openfheorg/openfhe-development) libraries. It leverages homomorphic encryption (currently using BGV scheme) to securely process encrypted data streams and integrates with a MySQL database. The project is containerized using Docker.
 
 This framework can be described as a variation of "Encrypted Processing as a Service" (EPaaS). A key aspect of this concept is the "separation of duties" assumption, which ensures that the server processing encrypted data does not have access to the secret key and ideally even doesn't learn the decryption results. To achieve this, client-side components (compiled in WebAssembly format) are provided. These can be used programmatically outside the server's reach to produce ciphertexts, which the server processes by invoking appropriate APIs.
 
