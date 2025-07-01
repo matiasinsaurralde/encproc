@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:1234'; // Set to '' for relative, or e.g. 'http://localhost:1234' for absolute URLs
+const baseUrl = ''; // Set to '' for relative, or e.g. 'http://localhost:1234' for absolute URLs
 
 let goDec = null;
 

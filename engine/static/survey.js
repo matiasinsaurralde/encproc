@@ -1,7 +1,4 @@
-// survey.js
-
-// Set this to your deployment root, e.g. '' for relative, or 'http://localhost:1234'
-const baseUrl = 'http://localhost:1234'; // Set to '' for relative, or e.g. 'http://localhost:1234' for absolute URLs
+const baseUrl = ''; // Set to '' for relative, or e.g. 'http://localhost:1234' for absolute URLs
 
 // Initialize variables for keypair and stream ID
 let keypair = null;

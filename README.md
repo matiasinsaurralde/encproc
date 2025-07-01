@@ -29,6 +29,16 @@ This parameter set is neither the most secure nor the most efficient or fitting 
 
 It should be noted that alternative EPaaS frameworks exist. Multi-key or threshold cryptosystems remove the need for a strict “separation of duties” assumption, but they introduce an operational constraint: users must be online simultaneously (or at specific stages) to collectively generate or combine keys for decryption. This can be impractical for certain web services that need asynchronous or on-demand decryption without waiting for all participants. So, if real-time user participation is acceptable, Multi-key or Threshold Encryption may indeed be preferable. If not, which we assume is the standard scenario an a web service setting, the “separation of duties” approach can offer a more practical alternative.
 
+### Monitoring with Prometheus
+`encproc` exposes **Prometheus** metrics so you can watch throughput, latency, and resource use while your encrypted workloads run.
+
+```text
+Endpoint:  /metrics           (enabled by default)
+Port:      9000               (served in a different go-routine and is only exposed locally to the prometheus instance, which run on port http:\\URL:9090)
+```
+Currently all default metrics are enabled. With time we will add `encproc` specific metrics for the homomorphic encryption operations.
+
+
 ## Usage
 
 If you want to prototype and experiment with this engine, you can either run it yourself or use an already running instance provided by someone else. The latter is the primary intended use case for this engine.
