@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.23-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -29,7 +29,8 @@ COPY --from=builder /app/api-server .
 # RUN chmod 600 ./tls/privkey.pem 
 
 # Expose the application port
-EXPOSE 1234
+EXPOSE 8080
+EXPOSE 9000
 
 # Run the application
 CMD ["./api-server"]

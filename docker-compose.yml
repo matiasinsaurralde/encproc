@@ -1,4 +1,7 @@
+version: "3.9"
+
 services:
+  # ────────────────────────────────── Datastore ──────────────────────────────────
   db:
     image: mysql:8.0
     container_name: mysql-container
@@ -12,22 +15,24 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  # ─────────────────────────────────── API ───────────────────────────────────────
   api:
-    build:
-      context: .
+    build: .
     container_name: api-server
-    user: "1000:1000" 
+    user: "1000:1000"
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "1234:1234"
+      - "8080:8080"          # public API
     environment:
+      API_ADDR: ":8080"          # API address
+      METRICS_ADDR: ":9000"  # metrics address
       DB_HOST: db
       DB_PORT: 3306
       DB_NAME: mydb
@@ -35,6 +40,39 @@ services:
       DB_PASSWORD: mypassword
       SECRET_KEY: jwt_secret_key
     volumes:
-      - ./engine/static:/app/static 
+      - ./engine/static:/app/static
+
+  # ──────────────────────────────── Prometheus ───────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    container_name: prometheus
+    restart: always
+    ports: ["9090:9090"]
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.config.file=/etc/prometheus/web.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/prometheus/web.yml:/etc/prometheus/web.yml:ro
+      - prometheus_data:/prometheus
+
+  # ───────────────────────────────── Grafana ─────────────────────────────────────
+  #grafana:
+  #  image: grafana/grafana:12.0.2
+  #  container_name: grafana
+  #  restart: always
+  #  ports: ["3000:3000"]
+  #  depends_on: [prometheus]
+  #  environment:
+  #    GF_SECURITY_ADMIN_USER:    admin          # whatever name you like
+  #    GF_SECURITY_ADMIN_PASSWORD: superSecret42 # ⇽ initial admin password
+  #    GF_USERS_ALLOW_SIGN_UP:    "false"        # disable open self-signup
+  #  volumes:
+  #    - grafana_data:/var/lib/grafana
+
 volumes:
   db_data:
+  prometheus_data:
+  #grafana_data:
