@@ -25,7 +25,7 @@ It should be noted that alternative EPaaS frameworks exist. Multi-key or thresho
 
 ```text
 Endpoint:  /metrics           (enabled by default)
-Port:      9000               (served in a different go-routine and is only exposed locally to the prometheus instance, which run on port http:\\URL:9090)
+Port:      9000               
 ```
 Currently all default metrics are enabled. With time we will add `encproc` specific metrics for the homomorphic encryption operations.
 
