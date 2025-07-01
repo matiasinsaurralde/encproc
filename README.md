@@ -14,16 +14,7 @@ The API is also documented with swagger, see [Swagger Documentation](https://pse
 
 Our [roadmap](https://pseudocrypt.site/) includes expanding the engine with additional functionalities—such as standard statistical computations (e.g., mean, standard deviation, variance, correlations, matchings, and more)—and integrating further HE schemes, such as CKKS. We deliberately omit the prefix "fully" from Homomorphic Encryption because we focus on use cases with guaranteed efficiency. Although bootstrapping mechanisms—an inherently inefficient component when the functionality requires an exceedingly high multiplication depth—may be incorporated in the future, our experience shows that many use cases can be efficiently realized using "simple" (leveled) HE.
 
-Currently, parameterizations are limited to one static, pre-defined parameter set:
-
-```go
-var def_parameter = {
-    "LogN": 12,
-    "LogQ": [58],
-    "PlaintextModulus": 65537
-}
-```
-This parameter set is neither the most secure nor the most efficient or fitting for every use case. The limitation of this parameter set being non-configurable at the client side during key generation will be lifted in the future. 
+Currently, parameterizations are limited to one static, pre-defined parameter set. This parameter set is neither the most secure nor the most efficient or fitting for every use case. The limitation of this parameter set being non-configurable at the client side during key generation will be lifted in the future. 
 
 ## Alternative EPaaS Frameworks
 
