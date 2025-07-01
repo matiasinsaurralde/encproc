@@ -32,10 +32,7 @@ Currently all default metrics are enabled. With time we will add `encproc` speci
 
 ## Usage
 
-If you want to prototype and experiment with this engine, you can either run it yourself or use an already running instance provided by someone else. The latter is the primary intended use case for this engine.
-
-- **Running Locally**: If you are running the engine locally, you may disable the authorization middleware in the source code for easier experimentation.
-- **Using a Remote Instance**: If you are experimenting with a running instance hosted by someone else, you will need to register a data stream with the engine.
+If you want to prototype and experiment with this engine, you can either run it yourself or use an already running instance provided by someone else. The latter is the primary intended use case for this engine. If you are experimenting with a running instance hosted by someone else, you will need to register a data stream with the engine. Feel free to use the [pseudocrypt instance](https://pseudocrypt.site/) The current front-end for registering a stream is simply creating an empty survey. In the near future we will add a separate UI for creating non-survey encrypted streams.
 
 For detailed instructions on how to use this engine, please refer to the documentation and examples provided in this repository. Below, we provide an overview of the API endpoints.
 
