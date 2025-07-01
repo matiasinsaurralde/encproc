@@ -1,17 +1,24 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/collapsinghierarchy/encproc/models"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
+	"golang.org/x/sync/errgroup"
 )
 
 type calculator struct {
@@ -44,12 +51,14 @@ func main() {
 	//------------------ Init the CORS Middleware -----------------------
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods: []string{"GET", "POST"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	})
 
 	//------------------ Init the database connections -----------------------
-	addr := getEnv("ADDR", ":1234")
+	addr := getEnv("API_ADDR", ":8080")
+	metricsAddr := getEnv("METRICS_ADDR", ":9000")
+
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "3306")
 	dbName := getEnv("DB_NAME", "mydb")
@@ -91,26 +100,60 @@ func main() {
 	}
 
 	calc.calc_model.InitializeTables()
-	mux := calc.routes()
+	apiMux := calc.routes()
 
 	jwtMW := &jWTMiddleware{secretKey: []byte(jwt_sk)}
 	calc.jWTMiddleware = jwtMW
 
-	srv := &http.Server{
+	apiSrv := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
 		Addr:         addr,
-		Handler:      c.Handler(mux),
+		Handler:      c.Handler(apiMux),
 		TLSConfig:    tlsConfig,
 	}
 
-	calc.logger.Info("starting server on :1234")
+	// ───────────────────────────── middleware / routing ──────────────────────────
+	metricsMux := http.NewServeMux()
+	metricsMux.Handle("GET /metrics",
+		promhttp.InstrumentMetricHandler(
+			prometheus.DefaultRegisterer, // publish promhttp_* stats here
+			promhttp.Handler(),           // exporter
+		),
+	)
 
-	//err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
-	err = srv.ListenAndServe()
-	logger.Error(err.Error())
-	os.Exit(1)
+	// ───────────────────────────── metrics server ──────────────────────────────
+	metricsSrv := &http.Server{Addr: metricsAddr, Handler: metricsMux}
+
+	// ─────────────────────────── context + errgroup ─────────────────────
+	// 1) cancel ctx on SIGINT/SIGTERM
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	// 2) all goroutines derive from that ctx
+	g, ctx := errgroup.WithContext(ctx)
+
+	// API listener
+	g.Go(func() error {
+		go func() { <-ctx.Done(); _ = apiSrv.Shutdown(context.Background()) }()
+		return apiSrv.ListenAndServe() //err = srv.ListenAndServeTLS(".crt", ".pem")
+	})
+
+	// metrics listener
+	g.Go(func() error {
+		go func() { <-ctx.Done(); _ = metricsSrv.Shutdown(context.Background()) }()
+		return metricsSrv.ListenAndServe()
+	})
+
+	//calc.logger.Info("API on :443, metrics on :9000 — press Ctrl-C to stop")
+	calc.logger.Info("API on " + addr + ", metrics on " + metricsAddr + " — press Ctrl-C to stop")
+
+	// wait for error OR signal
+	if err := g.Wait(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		calc.logger.Error("server error: %v\n", err)
+	}
+
 }
 
 // The openDB() function wraps sql.Open() and returns a sql.DB connection pool
