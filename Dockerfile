@@ -23,10 +23,11 @@ FROM alpine:3.20
 WORKDIR /app
 
 # Copy the binary from builder stage
-COPY --from=builder /app/api-server .
+COPY --from=builder --chown=1000:1000 /app/api-server .
+#COPY --from=builder --chown=1000:1000 /app/tls ./tls
 
 # Set Proper permissions for TLS private key (not needed for local development)
-# RUN chmod 600 ./tls/privkey.pem 
+#RUN chmod 600 ./tls/privkey.pem 
 
 # Expose the application port
 EXPOSE 8080

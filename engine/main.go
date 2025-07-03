@@ -66,6 +66,10 @@ func main() {
 	dbPassword := getEnv("DB_PASSWORD", "mypassword")
 	jwt_sk := getEnv("SECRET_KEY", "m9Lk5RgBq23rTpqZn8A1F9Us4qaMphzd1knmn1H3p6A=")
 
+	// Read optional TLS material from the environment.
+	certFile := os.Getenv("TLS_CERT_FILE") // e.g. "/certs/fullchain.pem"
+	keyFile := os.Getenv("TLS_KEY_FILE")   // e.g. "/certs/privkey.pem"
+
 	// Build the connection string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		dbUser, dbPassword, dbHost, dbPort, dbName)
@@ -133,11 +137,17 @@ func main() {
 
 	// 2) all goroutines derive from that ctx
 	g, ctx := errgroup.WithContext(ctx)
-
+	// ──────────────────────────── start the servers ────────────────────────────
 	// API listener
 	g.Go(func() error {
+		// shut down gracefully on Ctrl-C / docker stop
 		go func() { <-ctx.Done(); _ = apiSrv.Shutdown(context.Background()) }()
-		return apiSrv.ListenAndServe() //err = srv.ListenAndServeTLS(".crt", ".pem")
+		if certFile != "" && keyFile != "" {
+			calc.logger.Info("TLS enabled on " + addr)
+			return apiSrv.ListenAndServeTLS(certFile, keyFile)
+		}
+		calc.logger.Info("Plain HTTP on " + addr)
+		return apiSrv.ListenAndServe()
 	})
 
 	// metrics listener

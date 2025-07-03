@@ -138,7 +138,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       latestStreamId = data.id;
 
       // Show participation link at the top, copyable
-      const link = `${baseUrl}/stream/${data.id}/contribute`;
+      const link = new URL(`/stream/${data.id}/contribute`, window.location.origin).href;
       participationLinkInput.value = link;
       participationLinkDiv.style.display = 'block';
 

@@ -38,7 +38,8 @@ services:
       DB_NAME: mydb
       DB_USER: myuser
       DB_PASSWORD: mypassword
-      SECRET_KEY: jwt_secret_key
+      #TLS_CERT_FILE: "/certs/fullchain.pem"
+      #TLS_KEY_FILE:  "/certs/privkey.pem"
     volumes:
       - ./engine/static:/app/static
 
