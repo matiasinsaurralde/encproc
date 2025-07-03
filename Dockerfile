@@ -1,37 +1,30 @@
-# Build stage
+############ Build stage ############
 FROM golang:1.24-alpine AS builder
 
-# Set the working directory
-WORKDIR /app
+WORKDIR /src
 
-# Copy go.mod and go.sum files
-COPY ./engine/go.mod ./engine/go.sum ./
-
-# Download dependencies
+# Go caching tip: copy the go.mod first so `go mod download` can cache layers
+COPY engine/go.mod engine/go.sum ./
 RUN go mod download
 
-# Copy the application source code
-COPY ./engine .
+# Copy the rest of the source
+COPY engine .
 
-# Build the Go application
-RUN go build -o api-server .
+# Build a small statically linked binary
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /out/api-server .
 
-# Runtime stage
+############ Runtime stage ############
 FROM alpine:3.20
 
-# Set the working directory
+# Create an unprivileged user (1000:1000 matches compose)
+RUN addgroup -g 1000 app && adduser -S -u 1000 -G app app
+
 WORKDIR /app
+COPY --from=builder /out/api-server .         
 
-# Copy the binary from builder stage
-COPY --from=builder --chown=1000:1000 /app/api-server .
-#COPY --from=builder --chown=1000:1000 /app/tls ./tls
+EXPOSE 8080  
+EXPOSE 9000  
+EXPOSE 443    
 
-# Set Proper permissions for TLS private key (not needed for local development)
-#RUN chmod 600 ./tls/privkey.pem 
-
-# Expose the application port
-EXPOSE 8080
-EXPOSE 9000
-
-# Run the application
+USER 1000:1000
 CMD ["./api-server"]

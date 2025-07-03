@@ -38,8 +38,6 @@ services:
       DB_NAME: mydb
       DB_USER: myuser
       DB_PASSWORD: mypassword
-      #TLS_CERT_FILE: "/certs/fullchain.pem"
-      #TLS_KEY_FILE:  "/certs/privkey.pem"
     volumes:
       - ./engine/static:/app/static
 
@@ -51,12 +49,10 @@ services:
     ports: ["9090:9090"]
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--web.config.file=/etc/prometheus/web.yml"
       - "--storage.tsdb.path=/prometheus"
       - "--web.enable-lifecycle"
     volumes:
       - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./deploy/prometheus/web.yml:/etc/prometheus/web.yml:ro
       - prometheus_data:/prometheus
 
   # ───────────────────────────────── Grafana ─────────────────────────────────────
