@@ -158,10 +158,9 @@ func main() {
 
 	//calc.logger.Info("API on :443, metrics on :9000 — press Ctrl-C to stop")
 	calc.logger.Info("API on " + addr + ", metrics on " + metricsAddr + " — press Ctrl-C to stop")
-
 	// wait for error OR signal
 	if err := g.Wait(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		calc.logger.Error("server error: %v\n", err)
+		calc.logger.Error("server error", "error", err)
 	}
 
 }
