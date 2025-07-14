@@ -91,8 +91,11 @@ func (agg *aggregator) aggregate(ct_bin []byte) error {
 		return nil
 	}
 
-	agg.eval.Add(agg.ct_aggr, ct, agg.ct_aggr)
-	agg.ctr++
+	if err := agg.eval.Add(agg.ct_aggr, ct, agg.ct_aggr); err != nil {
+		agg.logger.Error("failed to add ciphertext", "error", err)
+		return err
+	}
 
+	agg.ctr++
 	return nil
 }
